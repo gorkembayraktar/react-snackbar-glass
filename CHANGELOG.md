@@ -5,6 +5,22 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-10-28
+
+### Added
+
+- Surface presets via `tone`: `paper` (opaque matte, light/dark aware),
+  `graphite` (dark charcoal in both themes) and `neon` (near-black with an
+  accent glow), next to the existing `glass` and `solid`. Per-snackbar, on the
+  provider and in store config; no new prop to learn.
+- Demo: the playground's tone switch is now a five-way surface picker with
+  swatches.
+
+### Fixed
+
+- Title-less cards no longer pin their message to the top edge: content is
+  centred against the icon when there is no title.
+
 ## [1.3.0] - 2026-10-28
 
 ### Added

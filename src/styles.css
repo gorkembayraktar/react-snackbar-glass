@@ -654,6 +654,128 @@
   color: #fff;
 }
 
+/* ------------------------------------------------------------ paper tone */
+
+/* Matte and opaque: reads like a native OS notification, no blur needed. */
+.prs-item[data-tone="paper"] .prs-item__surface {
+  --prs-blur: none;
+  --prs-inner: rgba(255, 255, 255, 0.9);
+  border-color: rgba(15, 23, 42, 0.09);
+  background: #ffffff;
+  box-shadow:
+    inset 0 1px 0 var(--prs-inner),
+    0 1px 2px rgba(15, 23, 42, 0.06),
+    0 14px 28px -22px rgba(15, 23, 42, 0.45);
+}
+
+@supports (color: light-dark(#000, #fff)) {
+  .prs-item[data-tone="paper"] .prs-item__surface {
+    --prs-inner: light-dark(
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0.05)
+    );
+    border-color: light-dark(
+      rgba(15, 23, 42, 0.09),
+      rgba(255, 255, 255, 0.09)
+    );
+    background: light-dark(#ffffff, #191b23);
+    box-shadow:
+      inset 0 1px 0 var(--prs-inner),
+      0 1px 2px light-dark(rgba(15, 23, 42, 0.05), rgba(0, 0, 0, 0.5)),
+      0 14px 28px -22px light-dark(rgba(15, 23, 42, 0.4), rgba(0, 0, 0, 0.8));
+  }
+}
+
+.prs-item[data-tone="paper"] .prs-item__surface::before {
+  opacity: 0.015;
+}
+
+/* --------------------------------------------------------- graphite tone */
+
+/* Dark matte charcoal that holds up on light and dark pages alike. */
+.prs-item[data-tone="graphite"] {
+  --prs-accent: var(--prs-accent-dark);
+}
+
+.prs-item[data-tone="graphite"] .prs-item__surface {
+  --prs-fg: #f3f5fa;
+  --prs-muted: rgba(243, 245, 250, 0.74);
+  --prs-track: rgba(255, 255, 255, 0.12);
+  --prs-inner: rgba(255, 255, 255, 0.07);
+  --prs-blur: none;
+  border-color: rgba(255, 255, 255, 0.11);
+  background: #1f232c;
+  background:
+    radial-gradient(
+      120% 150% at 0% 0%,
+      rgba(255, 255, 255, 0.06),
+      transparent 55%
+    ),
+    linear-gradient(180deg, #2b303b, #1b1f27);
+  box-shadow:
+    inset 0 1px 0 var(--prs-inner),
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 18px 40px -26px rgba(0, 0, 0, 0.85);
+}
+
+/* ------------------------------------------------------------- neon tone */
+
+/* Near-black card with an accent glow — the loud one, for dev tools. */
+.prs-item[data-tone="neon"] {
+  --prs-accent: var(--prs-accent-dark);
+}
+
+.prs-item[data-tone="neon"] .prs-item__surface {
+  --prs-fg: #f8fafc;
+  --prs-muted: rgba(248, 250, 252, 0.7);
+  --prs-track: rgba(255, 255, 255, 0.14);
+  --prs-inner: rgba(255, 255, 255, 0.05);
+  --prs-blur: none;
+  border-color: rgba(255, 255, 255, 0.14);
+  background: #080a11;
+  box-shadow:
+    inset 0 1px 0 var(--prs-inner),
+    0 18px 40px -28px rgba(0, 0, 0, 0.9),
+    0 0 30px -14px var(--prs-accent);
+}
+
+@supports (color: color-mix(in srgb, red, blue)) {
+  .prs-item[data-tone="neon"] .prs-item__surface {
+    border-color: color-mix(in srgb, var(--prs-accent) 55%, transparent);
+    background:
+      radial-gradient(
+        120% 160% at 0% 0%,
+        color-mix(in srgb, var(--prs-accent) 26%, transparent),
+        transparent 58%
+      ),
+      radial-gradient(
+        120% 160% at 100% 100%,
+        color-mix(in srgb, var(--prs-accent) 12%, transparent),
+        transparent 62%
+      ),
+      #080a11;
+    box-shadow:
+      inset 0 1px 0 var(--prs-inner),
+      0 0 0 1px color-mix(in srgb, var(--prs-accent) 22%, transparent),
+      0 18px 40px -28px color-mix(in srgb, var(--prs-accent) 45%, transparent),
+      0 0 32px -12px color-mix(in srgb, var(--prs-accent) 70%, transparent);
+  }
+}
+
+.prs-item[data-tone="graphite"] .prs-item__surface::before,
+.prs-item[data-tone="neon"] .prs-item__surface::before {
+  opacity: 0.07;
+}
+
+/* Dark presets need a stronger accent tint for the glyph chip to read. */
+@supports (color: color-mix(in srgb, red, blue)) {
+  .prs-item[data-tone="graphite"],
+  .prs-item[data-tone="neon"] {
+    --prs-accent-soft: color-mix(in srgb, var(--prs-accent) 26%, transparent);
+    --prs-accent-ring: color-mix(in srgb, var(--prs-accent) 42%, transparent);
+  }
+}
+
 /* ------------------------------------------------------------- keyframes */
 
 @keyframes prs-in {

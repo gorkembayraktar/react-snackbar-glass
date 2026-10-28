@@ -91,7 +91,10 @@ const LAYOUTS: { value: SnackbarLayout; label: string }[] = [
 
 const TONES: { value: SnackbarTone; label: string }[] = [
   { value: 'glass', label: 'Glass' },
+  { value: 'paper', label: 'Paper' },
   { value: 'solid', label: 'Solid' },
+  { value: 'graphite', label: 'Graphite' },
+  { value: 'neon', label: 'Neon' },
 ];
 
 const SIZES: { value: SnackbarSize; label: string }[] = [
@@ -240,6 +243,8 @@ interface Scenario {
   id: string;
   group: string;
   label: string;
+  /** `false` for stack-level demos that should not re-fire on option tweaks. */
+  repeat?: boolean;
   build: (controls: Controls) => Built;
 }
 
@@ -457,6 +462,7 @@ const SCENARIOS: Scenario[] = [
     id: 'minimize',
     group: 'Stacks',
     label: 'minimize ↔ expand',
+    repeat: false,
     build: (controls) => ({
       label: 'toast.minimize() / toast.expand()',
       code: `toast.success('First notification');\ntoast.info('Second notification');\ntoast.warning('Third notification');\n\ntoast.minimize();  // collapse into one pill\n\ntoast.expand();    // bring them back`,
@@ -478,6 +484,7 @@ const SCENARIOS: Scenario[] = [
     id: 'dismissAll',
     group: 'Stacks',
     label: 'dismissAll',
+    repeat: false,
     build: () => ({
       label: 'toast.dismissAll()',
       code: `toast.dismissAll();`,
@@ -543,6 +550,10 @@ export default function ApiHome() {
   useEffect(() => {
     if (lastKey.current === key) return;
     lastKey.current = key;
+
+    const scenario = SCENARIOS.find((item) => item.id === activeId);
+    if (scenario && scenario.repeat === false) return;
+
     runRef.current(activeId);
   }, [key, activeId]);
 
@@ -586,7 +597,7 @@ function Docs({
         <a className="brand" href="#top">
           <span className="brand__mark" aria-hidden="true" />
           <span className="brand__name">Glass Snackbar</span>
-          <span className="brand__tag">v1.3</span>
+          <span className="brand__tag">v1.4</span>
         </a>
 
         <nav className="topbar__nav" aria-label="Sections">
@@ -905,7 +916,9 @@ function Docs({
                     <code>tone</code>
                   </td>
                   <td>
-                    <code>'glass'</code> · <code>'solid'</code>
+                    <code>'glass'</code> · <code>'paper'</code> ·{' '}
+                    <code>'solid'</code> · <code>'graphite'</code> ·{' '}
+                    <code>'neon'</code>
                   </td>
                   <td>
                     <code>'glass'</code>
@@ -975,8 +988,10 @@ function Docs({
             />
             <div className="split__aside">
               <p>
-                Or scope it to one snackbar with the <code>style</code> prop, or
-                switch surface with <code>tone="solid"</code>.
+                Or scope it to one snackbar with the <code>style</code> prop. Need
+                a different look? Five surfaces ship out of the box:{' '}
+                <code>glass</code>, <code>paper</code>, <code>solid</code>,{' '}
+                <code>graphite</code> and <code>neon</code>.
               </p>
               <p>
                 <code>prefers-reduced-motion</code> is respected out of the
@@ -1096,41 +1111,48 @@ function Playground({
             </div>
           </div>
 
-          <div className="pg-field">
-            <span className="pg-field__label">Tone</span>
-            <div className="pg-seg" role="group" aria-label="Tone">
+          <div className="pg-field pg-field--wide">
+            <span className="pg-field__label">Surface</span>
+            <div className="pg-presets" role="group" aria-label="Surface">
               {TONES.map((tone) => (
                 <button
                   key={tone.value}
                   type="button"
-                  className={`pg-seg__item${
+                  className={`pg-preset${
                     controls.tone === tone.value ? ' is-active' : ''
                   }`}
                   aria-pressed={controls.tone === tone.value}
                   onClick={() => onChange('tone', tone.value)}
                 >
-                  {tone.label}
+                  <span
+                    className="pg-preset__swatch"
+                    data-tone={tone.value}
+                    aria-hidden="true"
+                  />
+                  <span className="pg-preset__label">{tone.label}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          <label className="pg-field">
+          <div className="pg-field pg-field--wide">
             <span className="pg-field__label">Size</span>
-            <select
-              className="pg-select"
-              value={controls.size}
-              onChange={(event) =>
-                onChange('size', event.target.value as SnackbarSize)
-              }
-            >
+            <div className="pg-seg" role="group" aria-label="Size">
               {SIZES.map((size) => (
-                <option key={size.value} value={size.value}>
+                <button
+                  key={size.value}
+                  type="button"
+                  className={`pg-seg__item${
+                    controls.size === size.value ? ' is-active' : ''
+                  }`}
+                  aria-pressed={controls.size === size.value}
+                  onClick={() => onChange('size', size.value)}
+                >
                   {size.label}
-                </option>
+                </button>
               ))}
-            </select>
-          </label>
+            </div>
+          </div>
 
           <label className="pg-field">
             <span className="pg-field__label">Position</span>

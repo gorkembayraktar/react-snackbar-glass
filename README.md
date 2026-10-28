@@ -4,7 +4,7 @@ A glassmorphic snackbar system for React — queueing, promise-aware
 states, swipe-to-dismiss and token-driven theming with **zero runtime
 dependencies**.
 
-- 🪟 **Glass or solid** surfaces, `xs` → `lg` sizes, six screen corners
+- 🪟 **Five surfaces** — `glass`, `paper`, `solid`, `graphite`, `neon`, `xs` → `lg` sizes, six screen corners
 - 🌍 **Global `toast`** — call it from anywhere, no hook required
 - ⏳ **Promise aware** — one call moves a snackbar through loading → success → error
 - 👆 **Swipe to dismiss**, hover/focus/document-hidden pause, countdown hairline
@@ -157,7 +157,7 @@ the snackbar only closes after the handler settles (`closeOnClick`, default
 | --- | --- | --- | --- |
 | `position` | `SnackbarPosition` | `'bottom-right'` | Default corner for new snackbars. |
 | `duration` | `number \| null` | `5000` | Auto-dismiss delay in ms. `null`/`0`/`Infinity` = persistent. |
-| `tone` | `'glass' \| 'solid'` | `'glass'` | Surface treatment. |
+| `tone` | `'glass' \| 'paper' \| 'solid' \| 'graphite' \| 'neon'` | `'glass'` | Surface preset. `paper` is matte and opaque, `solid` paints the accent, `graphite`/`neon` are dark in both themes. |
 | `size` | `'xs' \| 'sm' \| 'md' \| 'lg'` | `'md'` | Card density/width. |
 | `theme` | `'light' \| 'dark' \| 'auto'` | `'auto'` | Color scheme. |
 | `maxVisible` | `number` | `3` | Simultaneously visible cards per corner. |
@@ -258,6 +258,27 @@ toast.isMinimized(); // boolean
 `useSnackbar()` exposes the same three methods, and the store has
 `setMinimized(true | false)` + `getMinimized()`. Customize the pill text with
 `minimizedLabel={(count) => `${count} neue Meldungen`}`.
+
+## Surfaces
+
+Five presets ship with the stylesheet. Pick one per snackbar or as the default:
+
+```tsx
+<SnackbarProvider tone="paper">
+toast.info('Backup finished.', { tone: 'graphite' });
+```
+
+| `tone` | Look |
+| --- | --- |
+| `glass` | Frosted and translucent — the page shows through. Default. |
+| `paper` | Opaque, matte, hairline border, no blur. Follows light/dark. |
+| `solid` | The variant accent painted as the surface, white text. |
+| `graphite` | Dark matte charcoal with light text, in both themes. |
+| `neon` | Near-black with an accent glow ring, in both themes. |
+
+All five keep the same layout, icon tinting, progress hairline and motion, and
+every one is still driven by the `--prs-*` tokens, so you can restyle a preset
+without forking the CSS.
 
 ## Theming
 

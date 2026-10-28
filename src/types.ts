@@ -13,8 +13,21 @@ export type SnackbarVariant =
   | 'loading'
   | 'custom';
 
-/** `glass` is the frosted default; `solid` paints the accent as the surface. */
-export type SnackbarTone = 'glass' | 'solid';
+/**
+ * Surface preset for a snackbar.
+ *
+ * - `glass` — frosted translucent default; the page shows through.
+ * - `solid` — the variant accent painted as the surface.
+ * - `paper` — opaque, matte, hairline border, no blur. Light/dark aware.
+ * - `graphite` — dark matte charcoal with light text, in both themes.
+ * - `neon` — near-black with an accent glow ring, in both themes.
+ */
+export type SnackbarTone =
+  | 'glass'
+  | 'solid'
+  | 'paper'
+  | 'graphite'
+  | 'neon';
 
 /**
  * Density and width of a snackbar. `md` is the default; `xs` is a compact
