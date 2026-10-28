@@ -11,6 +11,8 @@ import type {
   SnackbarOptions,
   SnackbarPosition,
   SnackbarRecord,
+  SnackbarSize,
+  SnackbarTone,
 } from '../../src';
 
 /* ----------------------------------------------------------------- content */
@@ -40,17 +42,37 @@ toast.error('Upload failed', { action: { label: 'Retry', onClick: retry } });`;
 interface Controls {
   message: string;
   layout: SnackbarLayout;
+  tone: SnackbarTone;
+  size: SnackbarSize;
   position: SnackbarPosition;
   animation: SnackbarAnimation;
+  autoDismiss: boolean;
   duration: number;
+  progress: boolean;
+  dismissible: boolean;
+  icon: boolean;
+  pauseOnHover: boolean;
+  pauseOnHidden: boolean;
+  swipe: boolean;
+  maxVisible: number;
 }
 
 const DEFAULT_CONTROLS: Controls = {
   message: '',
   layout: 'card',
+  tone: 'glass',
+  size: 'md',
   position: 'bottom-right',
   animation: 'slide',
+  autoDismiss: true,
   duration: 5200,
+  progress: true,
+  dismissible: true,
+  icon: true,
+  pauseOnHover: true,
+  pauseOnHidden: true,
+  swipe: true,
+  maxVisible: 3,
 };
 
 const LAYOUTS: { value: SnackbarLayout; label: string }[] = [
@@ -58,6 +80,20 @@ const LAYOUTS: { value: SnackbarLayout; label: string }[] = [
   { value: 'compact', label: 'Compact' },
   { value: 'inline', label: 'Single line' },
 ];
+
+const TONES: { value: SnackbarTone; label: string }[] = [
+  { value: 'glass', label: 'Glass' },
+  { value: 'solid', label: 'Solid' },
+];
+
+const SIZES: { value: SnackbarSize; label: string }[] = [
+  { value: 'xs', label: 'XS' },
+  { value: 'sm', label: 'SM' },
+  { value: 'md', label: 'MD' },
+  { value: 'lg', label: 'LG' },
+];
+
+const STACK_LIMITS = [1, 2, 3, 5];
 
 const POSITIONS: { value: SnackbarPosition; label: string }[] = [
   { value: 'top-left', label: 'Top left' },
@@ -83,16 +119,22 @@ function baseOptions(controls: Controls): SnackbarOptions {
     layout: controls.layout,
     position: controls.position,
     animation: controls.animation,
-    duration: controls.duration,
+    tone: controls.tone,
+    size: controls.size,
+    progress: controls.progress,
+    dismissible: controls.dismissible,
+    icon: controls.icon ? undefined : false,
+    duration: controls.autoDismiss ? controls.duration : null,
   };
 }
 
 /** The same options, printed only where they differ from the defaults. */
 function visualLines(
   controls: Controls,
-  skip: { duration?: boolean; layout?: boolean } = {},
+  skip: { duration?: boolean; layout?: boolean; chrome?: boolean } = {},
 ): string {
   const lines: string[] = [];
+
   if (!skip.layout && controls.layout !== DEFAULT_CONTROLS.layout) {
     lines.push(`layout: '${controls.layout}',`);
   }
@@ -102,10 +144,54 @@ function visualLines(
   if (controls.animation !== DEFAULT_CONTROLS.animation) {
     lines.push(`animation: '${controls.animation}',`);
   }
-  if (!skip.duration && controls.duration !== DEFAULT_CONTROLS.duration) {
-    lines.push(`duration: ${controls.duration},`);
+  if (controls.tone !== DEFAULT_CONTROLS.tone) {
+    lines.push(`tone: '${controls.tone}',`);
   }
+  if (controls.size !== DEFAULT_CONTROLS.size) {
+    lines.push(`size: '${controls.size}',`);
+  }
+  if (!skip.chrome) {
+    if (!controls.progress) lines.push('progress: false,');
+    if (!controls.dismissible) lines.push('dismissible: false,');
+    if (!controls.icon) lines.push('icon: false,');
+  }
+  if (!skip.duration) {
+    if (!controls.autoDismiss) lines.push('duration: null,');
+    else if (controls.duration !== DEFAULT_CONTROLS.duration) {
+      lines.push(`duration: ${controls.duration},`);
+    }
+  }
+
   return lines.map((line) => `\n  ${line}`).join('');
+}
+
+/** Provider props, printed only when the playground changes them. */
+function providerLine(controls: Controls): string {
+  const props: string[] = [];
+  if (!controls.pauseOnHover) props.push('pauseOnHover={false}');
+  if (!controls.pauseOnHidden) props.push('pauseOnDocumentHidden={false}');
+  if (!controls.swipe) props.push('swipeToDismiss={false}');
+  if (controls.maxVisible !== DEFAULT_CONTROLS.maxVisible) {
+    props.push(`maxVisible={${controls.maxVisible}}`);
+  }
+
+  return props.length
+    ? `// provider props for this run\n// <SnackbarProvider ${props.join(' ')} />\n\n`
+    : '';
+}
+
+/** Options that only change how the next snackbar looks. */
+function visualKey(controls: Controls): string {
+  return [
+    controls.layout,
+    controls.tone,
+    controls.size,
+    controls.position,
+    controls.animation,
+    controls.progress,
+    controls.dismissible,
+    controls.icon,
+  ].join('|');
 }
 
 function textFor(controls: Controls, fallback: string): string {
@@ -138,7 +224,8 @@ interface Built {
   label: string;
   code: string;
   note: string;
-  run: () => void;
+  /** Returns the snackbar it created, so the preview can replace it. */
+  run: () => string | void;
 }
 
 interface Scenario {
@@ -263,6 +350,8 @@ const SCENARIOS: Scenario[] = [
               duration: controls.duration,
             });
           }, 1600);
+
+          return id;
         },
       };
     },
@@ -323,7 +412,11 @@ const SCENARIOS: Scenario[] = [
     group: 'Shapes',
     label: 'single → success',
     build: (controls) => {
-      const lines = visualLines(controls, { duration: true, layout: true });
+      const lines = visualLines(controls, {
+        duration: true,
+        layout: true,
+        chrome: true,
+      });
 
       return {
         label: 'toast.single() → update',
@@ -334,8 +427,9 @@ const SCENARIOS: Scenario[] = [
             variant: 'loading',
             position: controls.position,
             animation: controls.animation,
+            tone: controls.tone,
+            size: controls.size,
             duration: null,
-            dismissible: false,
           });
 
           void saveSettings().then(() => {
@@ -345,6 +439,8 @@ const SCENARIOS: Scenario[] = [
               duration: 3000,
             });
           });
+
+          return id;
         },
       };
     },
@@ -392,31 +488,85 @@ const REASON_LABELS: Record<SnackbarCloseReason, string> = {
 /* -------------------------------------------------------------------- page */
 
 export default function ApiHome() {
-  return (
-    <SnackbarProvider position="bottom-right" duration={5200} theme="light">
-      <Docs />
-    </SnackbarProvider>
-  );
-}
-
-function Docs() {
   const [controls, setControls] = useState<Controls>(DEFAULT_CONTROLS);
   const [activeId, setActiveId] = useState(SCENARIOS[0]!.id);
-
-  const run = useCallback(
-    (id: string) => {
-      const scenario = SCENARIOS.find((item) => item.id === id);
-      if (!scenario) return;
-      setActiveId(id);
-      scenario.build(controls).run();
-    },
-    [controls],
-  );
+  const previewId = useRef<string | null>(null);
 
   const update = <K extends keyof Controls,>(key: K, value: Controls[K]) => {
     setControls((current) => ({ ...current, [key]: value }));
   };
 
+  const reset = () => setControls(DEFAULT_CONTROLS);
+
+  /**
+   * Runs a scenario with the current controls. The previous preview is
+   * replaced instead of stacking, so trying options stays readable.
+   */
+  const run = useCallback(
+    (id: string) => {
+      const scenario = SCENARIOS.find((item) => item.id === id);
+      if (!scenario) return;
+
+      setActiveId(id);
+
+      if (previewId.current) {
+        toast.dismiss(previewId.current);
+        previewId.current = null;
+      }
+
+      const created = scenario.build(controls).run();
+      previewId.current = typeof created === 'string' ? created : null;
+    },
+    [controls],
+  );
+
+  // Re-run the active scenario when a visual option changes, so a new motion
+  // or size is visible immediately instead of after another click.
+  const key = visualKey(controls);
+  const lastKey = useRef(key);
+  const runRef = useRef(run);
+  runRef.current = run;
+
+  useEffect(() => {
+    if (lastKey.current === key) return;
+    lastKey.current = key;
+    runRef.current(activeId);
+  }, [key, activeId]);
+
+  return (
+    <SnackbarProvider
+      position="bottom-right"
+      duration={5200}
+      theme="light"
+      pauseOnHover={controls.pauseOnHover}
+      pauseOnDocumentHidden={controls.pauseOnHidden}
+      swipeToDismiss={controls.swipe}
+      maxVisible={controls.maxVisible}
+    >
+      <Docs
+        controls={controls}
+        onChange={update}
+        onReset={reset}
+        activeId={activeId}
+        onRun={run}
+      />
+    </SnackbarProvider>
+  );
+}
+
+function Docs({
+  controls,
+  onChange,
+  onReset,
+  activeId,
+  onRun,
+}: {
+  controls: Controls;
+  onChange: <K extends keyof Controls>(key: K, value: Controls[K]) => void;
+  onReset: () => void;
+  activeId: string;
+  onRun: (id: string) => void;
+}) {
   return (
     <div className="docs">
       <header className="topbar">
@@ -478,7 +628,7 @@ function Docs() {
                     key={id}
                     type="button"
                     className="quick-btn"
-                    onClick={() => run(id)}
+                    onClick={() => onRun(id)}
                   >
                     {scenario.label}
                   </button>
@@ -545,16 +695,17 @@ function Docs() {
             <span className="step-index">Playground</span>
             <h2>Tune it, then run it</h2>
             <p className="section__lede">
-              Every control on the left feeds the snippet on the right. Click a
-              scenario to fire it, tweak an option, then hit Run to repeat it.
+              Pick a scenario and tune it: the snippet follows every control,
+              and visual changes re-fire the preview so you see them at once.
             </p>
           </header>
 
           <Playground
             controls={controls}
-            onChange={update}
+            onChange={onChange}
+            onReset={onReset}
             activeId={activeId}
-            onRun={run}
+            onRun={onRun}
           />
         </section>
 
@@ -831,17 +982,20 @@ function Docs() {
 function Playground({
   controls,
   onChange,
+  onReset,
   activeId,
   onRun,
 }: {
   controls: Controls;
   onChange: <K extends keyof Controls>(key: K, value: Controls[K]) => void;
+  onReset: () => void;
   activeId: string;
   onRun: (id: string) => void;
 }) {
   const active = SCENARIOS.find((item) => item.id === activeId)!;
   const built = active.build(controls);
   const events = useEventLog();
+  const code = providerLine(controls) + built.code;
 
   return (
     <div className="playground">
@@ -870,6 +1024,13 @@ function Playground({
               </div>
             ),
           )}
+        </div>
+
+        <div className="pg-head">
+          <span className="pg-label">Options</span>
+          <button type="button" className="pg-reset" onClick={onReset}>
+            Reset
+          </button>
         </div>
 
         <div className="pg-controls">
@@ -902,6 +1063,42 @@ function Playground({
               ))}
             </div>
           </div>
+
+          <div className="pg-field">
+            <span className="pg-field__label">Tone</span>
+            <div className="pg-seg" role="group" aria-label="Tone">
+              {TONES.map((tone) => (
+                <button
+                  key={tone.value}
+                  type="button"
+                  className={`pg-seg__item${
+                    controls.tone === tone.value ? ' is-active' : ''
+                  }`}
+                  aria-pressed={controls.tone === tone.value}
+                  onClick={() => onChange('tone', tone.value)}
+                >
+                  {tone.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <label className="pg-field">
+            <span className="pg-field__label">Size</span>
+            <select
+              className="pg-select"
+              value={controls.size}
+              onChange={(event) =>
+                onChange('size', event.target.value as SnackbarSize)
+              }
+            >
+              {SIZES.map((size) => (
+                <option key={size.value} value={size.value}>
+                  {size.label}
+                </option>
+              ))}
+            </select>
+          </label>
 
           <label className="pg-field">
             <span className="pg-field__label">Position</span>
@@ -943,11 +1140,13 @@ function Playground({
             </select>
           </label>
 
-          <label className="pg-field">
+          <div className="pg-field pg-field--wide">
             <span className="pg-field__label">
-              Duration
+              <span>Duration</span>
               <span className="pg-field__value">
-                {(controls.duration / 1000).toFixed(1)}s
+                {controls.autoDismiss
+                  ? `${(controls.duration / 1000).toFixed(1)}s`
+                  : 'persistent'}
               </span>
             </span>
             <input
@@ -957,17 +1156,78 @@ function Playground({
               max={10000}
               step={200}
               value={controls.duration}
+              disabled={!controls.autoDismiss}
               onChange={(event) =>
                 onChange('duration', Number(event.target.value))
               }
             />
-          </label>
+            <Switch
+              label="Auto dismiss"
+              checked={controls.autoDismiss}
+              onChange={(value) => onChange('autoDismiss', value)}
+            />
+          </div>
+        </div>
+
+        <div className="pg-switch-grid">
+          <Switch
+            label="Progress bar"
+            checked={controls.progress}
+            onChange={(value) => onChange('progress', value)}
+          />
+          <Switch
+            label="Close button"
+            checked={controls.dismissible}
+            onChange={(value) => onChange('dismissible', value)}
+          />
+          <Switch
+            label="Icon"
+            checked={controls.icon}
+            onChange={(value) => onChange('icon', value)}
+          />
+          <Switch
+            label="Pause on hover"
+            checked={controls.pauseOnHover}
+            onChange={(value) => onChange('pauseOnHover', value)}
+          />
+          <Switch
+            label="Pause in background"
+            checked={controls.pauseOnHidden}
+            onChange={(value) => onChange('pauseOnHidden', value)}
+          />
+          <Switch
+            label="Swipe to dismiss"
+            checked={controls.swipe}
+            onChange={(value) => onChange('swipe', value)}
+          />
+        </div>
+
+        <div className="pg-field pg-field--wide">
+          <span className="pg-field__label">
+            <span>Max visible</span>
+            <span className="pg-field__value">{controls.maxVisible}</span>
+          </span>
+          <div className="pg-seg" role="group" aria-label="Max visible">
+            {STACK_LIMITS.map((limit) => (
+              <button
+                key={limit}
+                type="button"
+                className={`pg-seg__item${
+                  controls.maxVisible === limit ? ' is-active' : ''
+                }`}
+                aria-pressed={controls.maxVisible === limit}
+                onClick={() => onChange('maxVisible', limit)}
+              >
+                {limit}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       <div className="playground__code">
         <CodeBlock
-          code={built.code}
+          code={code}
           label={built.label}
           onRun={() => onRun(activeId)}
         />
@@ -975,6 +1235,31 @@ function Playground({
         <EventLog events={events} />
       </div>
     </div>
+  );
+}
+
+function Switch({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}) {
+  return (
+    <label className="pg-switch">
+      <input
+        className="pg-switch__input"
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+      />
+      <span className="pg-switch__track" aria-hidden="true">
+        <span className="pg-switch__thumb" />
+      </span>
+      <span className="pg-switch__text">{label}</span>
+    </label>
   );
 }
 
