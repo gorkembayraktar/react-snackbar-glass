@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 import {
   SnackbarProvider,
   toast,
@@ -450,12 +456,17 @@ const SCENARIOS: Scenario[] = [
   {
     id: 'minimize',
     group: 'Stacks',
-    label: 'minimize',
+    label: 'minimize ↔ expand',
     build: (controls) => ({
-      label: 'toast.minimize()',
-      code: `toast.success('First notification');\ntoast.info('Second notification');\ntoast.warning('Third notification');\n\ntoast.minimize();  // collapse into one pill\ntoast.expand();    // bring them back`,
-      note: 'Collapses the visible stack into a summary pill; click it to expand.',
+      label: 'toast.minimize() / toast.expand()',
+      code: `toast.success('First notification');\ntoast.info('Second notification');\ntoast.warning('Third notification');\n\ntoast.minimize();  // collapse into one pill\n\ntoast.expand();    // bring them back`,
+      note: 'Click the chip again to expand, click the pill, or press Expand below the snippet.',
       run: () => {
+        if (toast.isMinimized()) {
+          toast.expand();
+          return;
+        }
+
         toast.success('First notification', baseOptions(controls));
         toast.info('Second notification', baseOptions(controls));
         toast.warning('Third notification', baseOptions(controls));
@@ -1011,6 +1022,13 @@ function Playground({
   const events = useEventLog();
   const code = providerLine(controls) + built.code;
 
+  const store = useSnackbarStore();
+  const minimized = useSyncExternalStore(
+    store.subscribe,
+    store.getMinimized,
+    store.getServerMinimized,
+  );
+
   return (
     <div className="playground">
       <div className="playground__panel">
@@ -1246,6 +1264,23 @@ function Playground({
           onRun={() => onRun(activeId)}
         />
         <p className="playground__note">{built.note}</p>
+
+        {minimized ? (
+          <div className="pg-stack">
+            <span className="pg-stack__dot" aria-hidden="true" />
+            <span className="pg-stack__text">
+              Stack collapsed into one pill — nothing was dismissed.
+            </span>
+            <button
+              type="button"
+              className="pg-stack__action"
+              onClick={() => toast.expand()}
+            >
+              Expand
+            </button>
+          </div>
+        ) : null}
+
         <EventLog events={events} />
       </div>
     </div>

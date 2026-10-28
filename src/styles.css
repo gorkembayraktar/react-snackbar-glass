@@ -399,6 +399,13 @@
   padding-top: 1px;
 }
 
+/* Without a title the content is a single line, so it has to sit centred
+   against the icon instead of hanging from the top of the row. */
+.prs-item[data-layout="card"] .prs-item__content[data-has-title="false"] {
+  align-self: center;
+  padding-top: 0;
+}
+
 .prs-item__title {
   color: var(--prs-fg);
   font-size: var(--prs-title-size);
