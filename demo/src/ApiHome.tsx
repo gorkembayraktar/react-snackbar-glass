@@ -94,13 +94,36 @@ const EXAMPLES: Example[] = [
   {
     id: 'single',
     group: 'Shapes',
-    label: 'toast.single()',
-    code: `toast.single('Position set to top-center', {
+    label: 'single → success',
+    code: `const id = toast.single('Saving settings…', {
+  variant: 'loading',
+  duration: null,      // stay open while pending
+  dismissible: false,
+});
+
+await saveSettings();
+
+toast.update(id, {
   variant: 'success',
+  message: 'Settings saved',
+  duration: 3000,
 });`,
-    note: 'One line, content width, never wraps. Instant feedback.',
-    run: () =>
-      toast.single('Position set to top-center', { variant: 'success' }),
+    note: 'One line, two states: the same pill morphs from loading to success.',
+    run: () => {
+      const id = toast.single('Saving settings…', {
+        variant: 'loading',
+        duration: null,
+        dismissible: false,
+      });
+
+      void saveSettings().then(() => {
+        toast.update(id, {
+          variant: 'success',
+          message: 'Settings saved',
+          duration: 3000,
+        });
+      });
+    },
   },
   {
     id: 'compact',
