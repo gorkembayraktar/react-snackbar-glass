@@ -19,6 +19,7 @@ import type {
   SnackbarTone,
   SnackbarVariant,
 } from '../../src';
+import { ToastLab } from './ToastLab';
 
 /* ------------------------------------------------------------------ config */
 
@@ -561,6 +562,7 @@ export default function App() {
         <nav className="topbar__nav" aria-label="Sections">
           <a href="#studio">Studio</a>
           <a href="#recipes">Recipes</a>
+          <a href="#toast-api">Toast API</a>
           <a href="#install">Install</a>
         </nav>
 
@@ -1309,6 +1311,8 @@ function Showcase({
           </article>
         </div>
       </section>
+
+      <ToastLab />
 
       <section className="install" id="install">
         <div className="install__copy-box">
