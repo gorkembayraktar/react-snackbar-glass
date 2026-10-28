@@ -769,7 +769,16 @@ pre {
 }
 
 .playground__code {
+  position: sticky;
+  top: 84px;
   min-width: 0;
+  max-height: calc(100dvh - 104px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 2px 4px 6px;
+  margin: -2px -4px -6px;
+  scrollbar-width: thin;
+  scrollbar-color: #c9cee0 transparent;
 }
 
 .playground__note {
@@ -1068,6 +1077,12 @@ td:first-child {
 
   .playground {
     gap: 20px;
+  }
+
+  .playground__code {
+    position: static;
+    max-height: none;
+    overflow: visible;
   }
 
   .hero {
