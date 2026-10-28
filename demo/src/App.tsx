@@ -1017,10 +1017,11 @@ function Showcase({
                     title={POSITION_LABELS[position]}
                     onClick={() => {
                       set('position', position);
-                      toast.single(
-                        `Position set to ${POSITION_LABELS[position].toLowerCase()}`,
-                        { variant: 'success', duration: 2400, position },
-                      );
+                      toast.single(`Position set to ${position}`, {
+                        variant: 'success',
+                        duration: 2400,
+                        position,
+                      });
                     }}
                   >
                     <span className="position-button__screen">
