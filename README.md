@@ -8,6 +8,7 @@ dependencies**.
 - 🌍 **Global `toast`** — call it from anywhere, no hook required
 - ⏳ **Promise aware** — one call moves a snackbar through loading → success → error
 - 👆 **Swipe to dismiss**, hover/focus/document-hidden pause, countdown hairline
+- 📦 **Compact + minimize** — one-line pills, or collapse the whole stack
 - ♿ **Accessible** — polite/assertive live regions, keyboard reachable actions, `prefers-reduced-motion`
 - 🧩 **Typed** — written in TypeScript, ships ESM + CJS + `.d.ts`
 - 🪶 **Tiny** — React is the only peer dependency
@@ -160,6 +161,8 @@ the snackbar only closes after the handler settles (`closeOnClick`, default
 | `maxVisible` | `number` | `3` | Simultaneously visible cards per corner. |
 | `dismissible` | `boolean` | `true` | Show the close button. |
 | `progress` | `boolean` | `true` | Show the countdown hairline. |
+| `compact` | `boolean` | `false` | Single-line pill for every snackbar. |
+| `minimizedLabel` | `(count: number) => ReactNode` | `"3 notifications"` | Text on the collapsed pill. |
 | `pauseOnHover` | `boolean` | `true` | Freeze the timer while hovered. |
 | `pauseOnFocus` | `boolean` | `true` | Freeze the timer while focus is inside. |
 | `pauseOnDocumentHidden` | `boolean` | `true` | Pause when the tab is hidden. |
@@ -175,11 +178,38 @@ the snackbar only closes after the handler settles (`closeOnClick`, default
 ## `SnackbarOptions`
 
 `id`, `title`, `message`, `variant`, `duration`, `position`, `icon`,
-`action`, `dismissible`, `progress`, `tone`, `size`, `className`, `style`,
-`onOpen`, `onClose`.
+`action`, `dismissible`, `progress`, `compact`, `tone`, `size`, `className`,
+`style`, `onOpen`, `onClose`.
 
 Reusing an `id` updates (or revives) the existing snackbar instead of stacking
 a duplicate — ideal for progress-style flows.
+
+## Compact and minimized stacks
+
+Two ways to reclaim screen space when snackbars would otherwise pile up.
+
+**Compact** — a single-line pill per snackbar (no title, no hairline):
+
+```ts
+toast.success('Draft saved', { compact: true });
+snackbar.show({ message: 'Synced', compact: true });
+```
+
+Set it once for every snackbar with `<SnackbarProvider compact />` or
+`createSnackbarStore({ compact: true })`.
+
+**Minimized** — collapse the whole stack into one summary pill
+(`"3 notifications"`) that expands on click:
+
+```ts
+toast.minimize();   // stack → one pill
+toast.expand();     // back to full cards
+toast.isMinimized(); // boolean
+```
+
+`useSnackbar()` exposes the same three methods, and the store has
+`setMinimized(true | false)` + `getMinimized()`. Customize the pill text with
+`minimizedLabel={(count) => `${count} neue Meldungen`}`.
 
 ## Theming
 

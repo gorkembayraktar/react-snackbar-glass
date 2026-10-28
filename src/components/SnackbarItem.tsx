@@ -197,7 +197,10 @@ export function SnackbarItem({
       : record.icon;
   const showIcon = record.icon !== false;
   const showProgress =
-    record.progress && Number.isFinite(duration) && duration > 0;
+    !record.compact &&
+    record.progress &&
+    Number.isFinite(duration) &&
+    duration > 0;
 
   const style = {
     ...record.style,
@@ -218,6 +221,7 @@ export function SnackbarItem({
       data-dragging={dragging ? 'true' : 'false'}
       data-has-icon={showIcon ? 'true' : 'false'}
       data-dismissible={record.dismissible ? 'true' : 'false'}
+      data-compact={record.compact ? 'true' : 'false'}
       data-prs-id={record.id}
       data-position={record.position}
       style={style}

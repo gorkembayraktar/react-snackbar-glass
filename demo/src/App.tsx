@@ -39,7 +39,7 @@ const DEFAULT_CONFIG: Config = {
   position: 'bottom-right',
   tone: 'glass',
   size: 'md',
-  theme: 'dark',
+  theme: 'light',
   duration: 5200,
   maxVisible: 3,
   pauseOnHover: true,

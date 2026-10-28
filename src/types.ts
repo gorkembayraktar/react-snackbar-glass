@@ -85,6 +85,12 @@ export interface SnackbarOptions {
   dismissible?: boolean;
   /** Show the countdown hairline. @default true */
   progress?: boolean;
+  /**
+   * Single-line pill: no title, no countdown hairline and tighter padding.
+   * Ideal for high-frequency, low-stakes messages.
+   * @default false
+   */
+  compact?: boolean;
   /** @default 'glass' */
   tone?: SnackbarTone;
   /** @default 'md' */
@@ -111,6 +117,7 @@ export interface SnackbarRecord {
   readonly action: SnackbarAction | null;
   readonly dismissible: boolean;
   readonly progress: boolean;
+  readonly compact: boolean;
   readonly className: string | undefined;
   readonly style: CSSProperties | undefined;
   readonly createdAt: number;
@@ -130,6 +137,8 @@ export interface SnackbarStoreConfig {
   dismissible?: boolean;
   /** @default true */
   progress?: boolean;
+  /** Default `compact` value for new snackbars. @default false */
+  compact?: boolean;
   /** @default 'glass' */
   tone?: SnackbarTone;
   /** Default size for new snackbars. @default 'md' */
@@ -143,6 +152,7 @@ export interface ResolvedSnackbarStoreConfig {
   duration: number;
   dismissible: boolean;
   progress: boolean;
+  compact: boolean;
   tone: SnackbarTone;
   size: SnackbarSize;
   maxVisible: number;
@@ -184,6 +194,11 @@ export interface SnackbarStore {
   /** Internal-ish lifecycle hook, called by the viewport after the exit animation. */
   notifyExited(id: string): void;
   setPageHidden(hidden: boolean): void;
+  /** Whether the stack is collapsed into a single summary pill. */
+  getMinimized(): boolean;
+  getServerMinimized(): boolean;
+  /** Collapse (`true`) or expand (`false`) the visible stack. */
+  setMinimized(minimized: boolean): void;
 }
 
 type SnackbarPresetOptions = Omit<SnackbarOptions, 'message' | 'variant'>;
@@ -206,6 +221,11 @@ export interface SnackbarApi {
     messages: SnackbarPromiseOptions<T>,
     options?: SnackbarOptions,
   ): Promise<T>;
+  /** Collapse the visible stack into one summary pill. */
+  minimize(): void;
+  /** Restore the full stack after `minimize()`. */
+  expand(): void;
+  isMinimized(): boolean;
   /** Escape hatch for scheduling, subscribing or advanced updates. */
   store: SnackbarStore;
 }
@@ -239,6 +259,11 @@ export interface ToastApi {
     messages: SnackbarPromiseOptions<T>,
     options?: SnackbarOptions,
   ): Promise<T>;
+  /** Collapse the visible stack into one summary pill. */
+  minimize(): void;
+  /** Restore the full stack after `minimize()`. */
+  expand(): void;
+  isMinimized(): boolean;
   /** The store behind the global API (same instance the provider renders). */
   readonly store: SnackbarStore;
 }
@@ -270,6 +295,11 @@ export interface SnackbarHostProps {
   closeLabel?: string;
   /** Accessible label for each notification region. @default 'Notifications' */
   regionLabel?: string;
+  /**
+   * Text shown on the collapsed pill. Defaults to
+   * `"1 notification"` / `"3 notifications"`.
+   */
+  minimizedLabel?: (count: number) => ReactNode;
   className?: string;
   style?: CSSProperties;
   /** @default 2147483000 */
@@ -291,6 +321,8 @@ export interface SnackbarProviderProps
   dismissible?: boolean;
   /** @default true */
   progress?: boolean;
+  /** Render every snackbar as a single-line pill. @default false */
+  compact?: boolean;
   /** @default 'glass' */
   tone?: SnackbarTone;
   /** Default size for new snackbars. @default 'md' */

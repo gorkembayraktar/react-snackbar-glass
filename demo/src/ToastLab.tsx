@@ -42,6 +42,10 @@ export function ToastLab() {
     }, 1600);
   };
 
+  const runCompact = () => {
+    toast.success('Draft saved · just now', { compact: true, title: 'Saved' });
+  };
+
   const runPromise = () => {
     const task = new Promise<never>((_resolve, reject) => {
       window.setTimeout(() => reject(new Error('402 · card declined')), 1800);
@@ -99,6 +103,9 @@ export function ToastLab() {
     },
     { label: 'toast.loading() → update', run: runLoading },
     { label: 'toast.promise()', run: runPromise },
+    { label: 'compact pill', run: runCompact },
+    { label: 'toast.minimize()', run: () => toast.minimize() },
+    { label: 'toast.expand()', run: () => toast.expand() },
     { label: 'toast.dismissAll()', run: () => toast.dismissAll() },
   ];
 

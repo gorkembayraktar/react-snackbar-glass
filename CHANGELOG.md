@@ -5,6 +5,22 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-10-28
+
+### Added
+
+- `compact` snackbars: single-line pill, no title or countdown hairline.
+  Available per toast (`compact: true`), on the provider
+  (`<SnackbarProvider compact />`) and in the store config.
+- Minimize API: `toast.minimize()`, `toast.expand()`, `toast.isMinimized()`
+  (also on `useSnackbar()`), collapsing the whole stack into one summary pill
+  that expands on click.
+- `minimizedLabel` host prop to customise the collapsed pill text.
+
+### Changed
+
+- Demo homepage now defaults to the light theme.
+
 ## [1.1.0] - 2026-10-28
 
 ### Added

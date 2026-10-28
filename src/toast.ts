@@ -67,6 +67,10 @@ function createToast(): ToastApi {
     options?: SnackbarOptions,
   ): Promise<T> => getDefaultStore().promise(input, messages, options);
 
+  toast.minimize = () => getDefaultStore().setMinimized(true);
+  toast.expand = () => getDefaultStore().setMinimized(false);
+  toast.isMinimized = () => getDefaultStore().getMinimized();
+
   Object.defineProperty(toast, 'store', {
     get: getDefaultStore,
     enumerable: true,

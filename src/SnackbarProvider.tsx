@@ -31,6 +31,7 @@ export function SnackbarProvider({
   duration,
   dismissible,
   progress,
+  compact,
   tone,
   size,
   maxVisible,
@@ -52,11 +53,22 @@ export function SnackbarProvider({
       duration,
       dismissible,
       progress,
+      compact,
       tone,
       size,
       maxVisible,
     });
-  }, [store, position, duration, dismissible, progress, tone, size, maxVisible]);
+  }, [
+    store,
+    position,
+    duration,
+    dismissible,
+    progress,
+    compact,
+    tone,
+    size,
+    maxVisible,
+  ]);
 
   const api = useMemo<SnackbarApi>(() => {
     const preset =
@@ -84,6 +96,9 @@ export function SnackbarProvider({
           duration:
             options.duration !== undefined ? options.duration : null,
         }),
+      minimize: () => store.setMinimized(true),
+      expand: () => store.setMinimized(false),
+      isMinimized: () => store.getMinimized(),
       store,
     };
   }, [store]);

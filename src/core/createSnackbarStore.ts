@@ -17,6 +17,7 @@ const DEFAULT_CONFIG: ResolvedSnackbarStoreConfig = {
   duration: 5000,
   dismissible: true,
   progress: true,
+  compact: false,
   tone: 'glass',
   size: 'md',
   maxVisible: 3,
@@ -95,6 +96,9 @@ export function createSnackbarStore(
     ...(initialConfig.progress !== undefined
       ? { progress: initialConfig.progress }
       : null),
+    ...(initialConfig.compact !== undefined
+      ? { compact: initialConfig.compact }
+      : null),
     ...(initialConfig.tone !== undefined ? { tone: initialConfig.tone } : null),
     ...(initialConfig.size !== undefined ? { size: initialConfig.size } : null),
     ...(initialConfig.maxVisible !== undefined
@@ -108,6 +112,7 @@ export function createSnackbarStore(
   const shown = new Set<string>();
   const pauseReasons = new Map<string, Set<string>>();
   let pageHidden = false;
+  let minimized = false;
 
   const emit = () => {
     for (const listener of listeners) listener();
@@ -321,6 +326,7 @@ export function createSnackbarStore(
       action: options.action ?? null,
       dismissible: options.dismissible ?? config.dismissible,
       progress: options.progress ?? config.progress,
+      compact: options.compact ?? config.compact,
       className: options.className,
       style: options.style,
       createdAt: Date.now(),
@@ -354,6 +360,7 @@ export function createSnackbarStore(
         ? { dismissible: options.dismissible }
         : null),
       ...(options.progress !== undefined ? { progress: options.progress } : null),
+      ...(options.compact !== undefined ? { compact: options.compact } : null),
       ...(options.className !== undefined ? { className: options.className } : null),
       ...(options.style !== undefined ? { style: options.style } : null),
       ...(options.onOpen !== undefined ? { onOpen: options.onOpen } : null),
@@ -427,6 +434,7 @@ export function createSnackbarStore(
         ? { dismissible: patch.dismissible }
         : null),
       ...(patch.progress !== undefined ? { progress: patch.progress } : null),
+      ...(patch.compact !== undefined ? { compact: patch.compact } : null),
       ...(patch.tone !== undefined ? { tone: patch.tone } : null),
       ...(patch.size !== undefined ? { size: patch.size } : null),
       ...(patch.maxVisible !== undefined
@@ -503,6 +511,13 @@ export function createSnackbarStore(
     notifyShown,
     notifyExited,
     setPageHidden,
+    getMinimized: () => minimized,
+    getServerMinimized: () => false,
+    setMinimized(next: boolean) {
+      if (minimized === next) return;
+      minimized = next;
+      emit();
+    },
   };
 }
 

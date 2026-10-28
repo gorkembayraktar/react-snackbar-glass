@@ -23,6 +23,10 @@ const POSITIONS: readonly SnackbarPosition[] = [
   'bottom-right',
 ];
 
+function defaultMinimizedLabel(count: number): string {
+  return `${count} notification${count === 1 ? '' : 's'}`;
+}
+
 export function SnackbarHost({
   store,
   maxVisible = 3,
@@ -40,6 +44,7 @@ export function SnackbarHost({
   closeIcon,
   closeLabel = 'Dismiss notification',
   regionLabel = 'Notifications',
+  minimizedLabel = defaultMinimizedLabel,
   className,
   style,
   zIndex = 2147483000,
@@ -49,6 +54,11 @@ export function SnackbarHost({
     store.subscribe,
     store.getSnapshot,
     store.getServerSnapshot,
+  );
+  const minimized = useSyncExternalStore(
+    store.subscribe,
+    store.getMinimized,
+    store.getServerMinimized,
   );
   const [portalNode, setPortalNode] = useState<HTMLElement | null>(null);
   const regionRefs = useRef(new Map<SnackbarPosition, HTMLElement>());
@@ -140,6 +150,7 @@ export function SnackbarHost({
   }
 
   const limit = Math.max(1, Math.floor(maxVisible));
+  const minimizedPosition = records[0]?.position ?? null;
 
   const rootStyle = {
     '--prs-width': `${width}px`,
@@ -159,6 +170,33 @@ export function SnackbarHost({
       {POSITIONS.map((position) => {
         const items = byPosition.get(position);
         if (!items || items.length === 0) return null;
+
+        if (minimized) {
+          if (position !== minimizedPosition) return null;
+
+          return (
+            <section
+              key={position}
+              className="prs-region prs-region--minimized"
+              data-position={position}
+              aria-label={regionLabel}
+            >
+              <button
+                type="button"
+                className="prs-minimized"
+                data-count={items.length}
+                onClick={() => store.setMinimized(false)}
+                title="Expand notifications"
+              >
+                <span className="prs-minimized__dot" aria-hidden="true" />
+                <span className="prs-minimized__count">
+                  {minimizedLabel(items.length)}
+                </span>
+              </button>
+            </section>
+          );
+        }
+
         const visible = items.slice(0, limit);
 
         return (
