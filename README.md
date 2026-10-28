@@ -1,20 +1,44 @@
-# react-snackbar-glass
+<div align="center">
 
-Queueing, promise-aware snackbars for React — five ready-made surfaces, three
-densities, swipe-to-dismiss and token-driven theming with **zero runtime
-dependencies**.
+<img src="https://raw.githubusercontent.com/gorkembayraktar/react-snackbar-glass/main/assets/surfaces.png" alt="The five surfaces: glass, paper, solid, graphite and neon" width="100%" />
 
-- 🪟 **Five surfaces** — `glass`, `paper`, `solid`, `graphite`, `neon`
-- 📐 **Three layouts** — `card`, `compact`, `inline`; `toast.single()` for one-liners
-- 🌍 **Global `toast`** — call it from anywhere, no hook required
-- ⏳ **Promise aware** — one call moves a snackbar through loading → success → error
-- 👆 **Swipe to dismiss**, hover/focus/document-hidden pause, countdown hairline
-- 📦 **Compact + minimize** — one-line pills, or collapse the whole stack into one
-- 🎞️ **Pick your motion** — slide, fade, scale, pop, flip or none
-- ♿ **Accessible** — polite/assertive live regions, keyboard reachable actions, `prefers-reduced-motion`
-- 🧩 **Typed** — written in TypeScript, ships ESM + CJS + `.d.ts`
-- 🪶 **Tiny** — React is the only peer dependency
-- 🖥️ **SSR safe** — no `window` access during render
+<h1>react-snackbar-glass</h1>
+
+**Snackbars that look like they belong in your product.**<br />
+Five surfaces, three densities, promise-aware flows, swipe-to-dismiss and a
+global `toast` — with **zero runtime dependencies**.
+
+<p>
+  <a href="https://www.npmjs.com/package/react-snackbar-glass"><img alt="npm version" src="https://img.shields.io/npm/v/react-snackbar-glass?style=flat-square&color=6d5efc" /></a>
+  <a href="https://www.npmjs.com/package/react-snackbar-glass"><img alt="npm downloads" src="https://img.shields.io/npm/dm/react-snackbar-glass?style=flat-square&color=6d5efc" /></a>
+  <img alt="bundle size" src="https://img.shields.io/badge/gzip-8.6%20kB%20JS%20%2B%205.1%20kB%20CSS-6d5efc?style=flat-square" />
+  <a href="LICENSE"><img alt="license" src="https://img.shields.io/npm/l/react-snackbar-glass?style=flat-square&color=6d5efc" /></a>
+  <a href="https://github.com/gorkembayraktar/react-snackbar-glass/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/gorkembayraktar/react-snackbar-glass?style=flat-square&color=6d5efc" /></a>
+</p>
+
+<p>
+  <a href="https://gorkembayraktar.github.io/react-snackbar-glass/"><strong>Live demo</strong></a> ·
+  <a href="https://gorkembayraktar.github.io/react-snackbar-glass/#playground">Playground</a> ·
+  <a href="https://www.npmjs.com/package/react-snackbar-glass">npm</a> ·
+  <a href="#api">API reference</a>
+</p>
+
+</div>
+
+---
+
+**Why this one?**
+
+- 🪟 **Five surfaces** — `glass`, `paper`, `solid`, `graphite`, `neon`; switch the whole look with one prop.
+- 📐 **Three densities** — `card`, `compact`, `inline`; `toast.single()` for one-line status.
+- 🌍 **Global `toast`** — call it from anywhere: handlers, API clients, plain modules.
+- ⏳ **Promise aware** — one call moves a snackbar through loading → success → error.
+- 👆 **Swipe to dismiss**, hover/focus/document-hidden pause, countdown hairline.
+- 📦 **Minimize** — collapse the whole stack into a single summary pill.
+- 🎞️ **Motion presets** — slide, fade, scale, pop, flip or none.
+- ♿ **Accessible** — live regions, keyboard reachable actions, `prefers-reduced-motion`.
+- 🪶 **Tiny and typed** — 8.6 kB gzipped JS, 5.1 kB CSS, ESM + CJS + `.d.ts`, React 18/19.
+- 🖥️ **SSR safe** — no `window` access during render.
 
 ## Installation
 
