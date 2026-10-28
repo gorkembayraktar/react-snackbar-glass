@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Demo: the playground's tone switch is now a five-way surface picker with
   swatches.
 
+### Changed
+
+- README is now a full API reference: layouts, surfaces, sizes, animations,
+  every `SnackbarOptions` field, close reasons, the store surface and the
+  theming tokens.
+
 ### Fixed
 
 - Title-less cards no longer pin their message to the top edge: content is
