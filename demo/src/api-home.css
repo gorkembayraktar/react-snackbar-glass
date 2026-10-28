@@ -155,7 +155,7 @@ pre {
 /* ------------------------------------------------------------------- hero */
 
 .hero {
-  padding: 72px 0 44px;
+  padding: 56px 0 40px;
   max-width: 760px;
 }
 
@@ -189,7 +189,7 @@ pre {
 
 .hero__lede {
   max-width: 56ch;
-  margin: 0 0 28px;
+  margin: 0 0 24px;
   color: var(--docs-muted);
   font-size: 16.5px;
   line-height: 1.6;
@@ -211,7 +211,7 @@ pre {
   gap: 10px;
   width: fit-content;
   max-width: 100%;
-  margin-bottom: 26px;
+  margin-bottom: 20px;
   padding: 12px 12px 12px 16px;
   border: 1px solid #1b2036;
   border-radius: 14px;
@@ -252,12 +252,87 @@ pre {
   color: #fff;
 }
 
+/* quick-try panel */
+
+.quick-try {
+  max-width: 620px;
+  margin: 0 0 22px;
+  padding: 16px 18px 14px;
+  border: 1px solid var(--docs-line);
+  border-radius: var(--docs-radius);
+  background: var(--docs-panel);
+  box-shadow: 0 1px 2px rgba(11, 15, 30, 0.03);
+}
+
+.quick-try__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 13px;
+}
+
+.quick-try__label {
+  color: var(--docs-accent);
+  font-family: var(--docs-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.quick-try__hint {
+  color: var(--docs-muted);
+  font-size: 12px;
+}
+
+.quick-try__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.quick-btn {
+  padding: 9px 13px;
+  border: 1px solid var(--docs-line);
+  border-radius: 10px;
+  background: #fbfbfe;
+  color: var(--docs-ink);
+  font-family: var(--docs-mono);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease,
+    color 140ms ease, transform 120ms ease;
+}
+
+.quick-btn:hover {
+  border-color: var(--docs-accent);
+  background: var(--docs-accent-soft);
+  color: var(--docs-accent);
+}
+
+.quick-btn:active {
+  transform: scale(0.97);
+}
+
+.quick-try__more {
+  display: inline-block;
+  margin-top: 13px;
+  color: var(--docs-muted);
+  font-size: 12px;
+}
+
+.quick-try__more:hover {
+  color: var(--docs-ink);
+}
+
 /* buttons */
 
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  margin-bottom: 26px;
 }
 
 .button {

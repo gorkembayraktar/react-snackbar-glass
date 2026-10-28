@@ -34,9 +34,15 @@ interface Example {
   run: () => void;
 }
 
-function wait(ms: number) {
-  return new Promise<void>((resolve) => window.setTimeout(resolve, ms));
-}
+/* Hero quick actions: the six calls worth seeing first. */
+const HERO_IDS = [
+  'success',
+  'error',
+  'single',
+  'compact',
+  'motion',
+  'promise',
+] as const;
 
 const EXAMPLES: Example[] = [
   {
@@ -251,6 +257,11 @@ export default function ApiHome() {
   const [activeId, setActiveId] = useState(EXAMPLES[0]!.id);
   const active = EXAMPLES.find((example) => example.id === activeId)!;
 
+  const runExample = (example: Example) => {
+    setActiveId(example.id);
+    example.run();
+  };
+
   return (
     <SnackbarProvider position="bottom-right" duration={5200} theme="light">
       <div className="docs">
@@ -298,12 +309,36 @@ export default function ApiHome() {
 
             <InstallBar command={INSTALL} />
 
-            <div className="hero__actions">
-              <a className="button button--solid" href="#playground">
-                Try it live
+            <div className="quick-try">
+              <div className="quick-try__head">
+                <span className="quick-try__label">Try it now</span>
+                <span className="quick-try__hint">
+                  Live calls — no setup, no sign-up
+                </span>
+              </div>
+              <div className="quick-try__buttons">
+                {HERO_IDS.map((id) => {
+                  const example = EXAMPLES.find((item) => item.id === id)!;
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      className="quick-btn"
+                      onClick={() => runExample(example)}
+                    >
+                      {example.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <a className="quick-try__more" href="#playground">
+                All {EXAMPLES.length} examples ↓
               </a>
+            </div>
+
+            <div className="hero__actions">
               <a className="button button--quiet" href="#start">
-                Read the 3 steps
+                Read the 3-step setup
               </a>
             </div>
 
@@ -375,10 +410,7 @@ export default function ApiHome() {
                               example.id === activeId ? ' is-active' : ''
                             }`}
                             aria-pressed={example.id === activeId}
-                            onClick={() => {
-                              setActiveId(example.id);
-                              example.run();
-                            }}
+                            onClick={() => runExample(example)}
                           >
                             {example.label}
                           </button>
