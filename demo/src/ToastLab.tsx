@@ -5,6 +5,9 @@ const SNIPPET = `import { toast } from 'react-snackbar-glass';
 
 toast.success('Draft saved.', { title: 'Saved' });
 
+// One-line status: content width, never wraps
+toast.single('Position set to top-center', { variant: 'success' });
+
 const id = toast.loading('Uploading 19 assets…');
 toast.update(id, { variant: 'success', duration: 3200 });
 
@@ -44,6 +47,10 @@ export function ToastLab() {
 
   const runCompact = () => {
     toast.success('Draft saved · just now', { compact: true, title: 'Saved' });
+  };
+
+  const runSingle = () => {
+    toast.single('Position set to top-center', { variant: 'success' });
   };
 
   const runPromise = () => {
@@ -103,6 +110,7 @@ export function ToastLab() {
     },
     { label: 'toast.loading() → update', run: runLoading },
     { label: 'toast.promise()', run: runPromise },
+    { label: 'toast.single()', run: runSingle },
     { label: 'compact pill', run: runCompact },
     { label: 'toast.minimize()', run: () => toast.minimize() },
     { label: 'toast.expand()', run: () => toast.expand() },

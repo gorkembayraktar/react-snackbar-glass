@@ -12,9 +12,11 @@ export { toast } from './toast';
 export type {
   ResolvedSnackbarStoreConfig,
   SnackbarAction,
+  SnackbarAnimation,
   SnackbarApi,
   SnackbarCloseReason,
   SnackbarHostProps,
+  SnackbarLayout,
   SnackbarOptions,
   SnackbarPhase,
   SnackbarPosition,
@@ -30,4 +32,5 @@ export type {
   SnackbarVariant,
   ToastApi,
   ToastPresetOptions,
+  ToastSingleOptions,
 } from './types';

@@ -5,6 +5,23 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-10-28
+
+### Added
+
+- `layout` option: `'card' | 'compact' | 'inline'`, available per snackbar,
+  on `<SnackbarProvider layout="…">` and in the store config. `compact: true`
+  keeps working as sugar for `layout: 'compact'`.
+- `toast.single(message, options)` / `useSnackbar().single()`: message-only
+  status line with a hard one-line contract (ellipsis instead of wrapping),
+  no title, no hairline, and no close button while timed.
+- Animation presets: `animation`, `enterAnimation` and `exitAnimation`
+  (`'slide' | 'fade' | 'scale' | 'pop' | 'flip' | 'none'`).
+- `--prs-enter-duration` / `--prs-exit-duration` and `--prs-radius-inline`
+  CSS variables for pacing and shaping the new modes.
+- Demo: layout and motion selectors in the Studio panel, `toast.single()`
+  example, and position buttons now confirm with a single-line toast.
+
 ## [1.2.0] - 2026-10-28
 
 ### Added

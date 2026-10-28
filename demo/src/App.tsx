@@ -9,9 +9,12 @@ import {
 } from 'react';
 import {
   SnackbarProvider,
+  toast,
   useSnackbar,
 } from '../../src';
 import type {
+  SnackbarAnimation,
+  SnackbarLayout,
   SnackbarOptions,
   SnackbarPosition,
   SnackbarSize,
@@ -28,6 +31,8 @@ interface Config {
   tone: SnackbarTone;
   size: SnackbarSize;
   theme: SnackbarTheme;
+  layout: SnackbarLayout;
+  animation: SnackbarAnimation;
   duration: number;
   maxVisible: number;
   pauseOnHover: boolean;
@@ -40,6 +45,8 @@ const DEFAULT_CONFIG: Config = {
   tone: 'glass',
   size: 'md',
   theme: 'light',
+  layout: 'card',
+  animation: 'slide',
   duration: 5200,
   maxVisible: 3,
   pauseOnHover: true,
@@ -579,6 +586,8 @@ export default function App() {
         duration={config.duration}
         tone={config.tone}
         size={config.size}
+        layout={config.layout}
+        animation={config.animation}
         theme={config.theme}
         maxVisible={config.maxVisible}
         pauseOnHover={config.pauseOnHover}
@@ -1006,7 +1015,13 @@ function Showcase({
                     aria-label={POSITION_LABELS[position]}
                     aria-pressed={config.position === position}
                     title={POSITION_LABELS[position]}
-                    onClick={() => set('position', position)}
+                    onClick={() => {
+                      set('position', position);
+                      toast.single(
+                        `Position set to ${POSITION_LABELS[position].toLowerCase()}`,
+                        { variant: 'success', duration: 2400, position },
+                      );
+                    }}
                   >
                     <span className="position-button__screen">
                       <span
@@ -1053,6 +1068,43 @@ function Showcase({
                   { value: 'lg', label: 'L' },
                 ]}
               />
+            </div>
+
+            <div className="control">
+              <span className="control__label">Layout</span>
+              <Segmented
+                label="Snackbar layout"
+                value={config.layout}
+                onChange={(layout) => set('layout', layout)}
+                options={[
+                  { value: 'card', label: 'Card' },
+                  { value: 'compact', label: 'Compact' },
+                  { value: 'inline', label: 'Single line' },
+                ]}
+              />
+              <span className="control__hint">
+                <code>layout</code> · card, compact or inline
+              </span>
+            </div>
+
+            <div className="control">
+              <span className="control__label">Motion</span>
+              <Segmented
+                label="Enter and exit animation"
+                value={config.animation}
+                onChange={(animation) => set('animation', animation)}
+                options={[
+                  { value: 'slide', label: 'Slide' },
+                  { value: 'fade', label: 'Fade' },
+                  { value: 'scale', label: 'Scale' },
+                  { value: 'pop', label: 'Pop' },
+                  { value: 'flip', label: 'Flip' },
+                  { value: 'none', label: 'None' },
+                ]}
+              />
+              <span className="control__hint">
+                <code>animation</code> · new snackbars animate with this preset
+              </span>
             </div>
 
             <div className="control">

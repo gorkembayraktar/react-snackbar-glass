@@ -196,11 +196,12 @@ export function SnackbarItem({
       ? (icons?.[variant] ?? defaultIcons[variant])
       : record.icon;
   const showIcon = record.icon !== false;
-  const showProgress =
-    !record.compact &&
-    record.progress &&
-    Number.isFinite(duration) &&
-    duration > 0;
+  const isInline = record.layout === 'inline';
+  const isTimed = Number.isFinite(duration) && duration > 0;
+  const showProgress = record.layout === 'card' && record.progress && isTimed;
+  // Status lines stay clean; the close button only appears when the snackbar
+  // would otherwise never go away on its own.
+  const showClose = record.dismissible && (!isInline || !isTimed);
 
   const style = {
     ...record.style,
@@ -222,6 +223,9 @@ export function SnackbarItem({
       data-has-icon={showIcon ? 'true' : 'false'}
       data-dismissible={record.dismissible ? 'true' : 'false'}
       data-compact={record.compact ? 'true' : 'false'}
+      data-layout={record.layout}
+      data-enter={record.enterAnimation}
+      data-exit={record.exitAnimation}
       data-prs-id={record.id}
       data-position={record.position}
       style={style}
@@ -272,7 +276,7 @@ export function SnackbarItem({
           className="prs-item__content"
           data-has-title={title !== undefined && title !== null ? 'true' : 'false'}
         >
-          {title !== undefined && title !== null ? (
+          {title !== undefined && title !== null && !isInline ? (
             <div className="prs-item__title">{title}</div>
           ) : null}
           {message !== undefined && message !== null ? (
@@ -296,7 +300,7 @@ export function SnackbarItem({
           ) : null}
         </div>
 
-        {record.dismissible ? (
+        {showClose ? (
           <button
             type="button"
             className="prs-close"

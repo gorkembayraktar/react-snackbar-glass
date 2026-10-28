@@ -2,6 +2,7 @@ import { isValidElement } from 'react';
 import type {
   ResolvedSnackbarStoreConfig,
   SnackbarCloseReason,
+  SnackbarLayout,
   SnackbarOptions,
   SnackbarPromiseContent,
   SnackbarPromiseOptions,
@@ -18,6 +19,10 @@ const DEFAULT_CONFIG: ResolvedSnackbarStoreConfig = {
   dismissible: true,
   progress: true,
   compact: false,
+  layout: 'card',
+  animation: 'slide',
+  enterAnimation: 'slide',
+  exitAnimation: 'slide',
   tone: 'glass',
   size: 'md',
   maxVisible: 3,
@@ -74,37 +79,65 @@ function resolveContent<T>(
   return contentToOptions(resolved);
 }
 
+/**
+ * `layout` wins over the legacy `compact` flag; both fall back to the
+ * store-level default.
+ */
+function resolveLayout(
+  layout: SnackbarLayout | undefined,
+  compact: boolean | undefined,
+  fallback: SnackbarLayout,
+): SnackbarLayout {
+  if (layout !== undefined) return layout;
+  if (compact !== undefined) return compact ? 'compact' : 'card';
+  return fallback;
+}
+
+function resolveLayoutPatch(
+  record: SnackbarRecord,
+  options: Partial<SnackbarOptions>,
+): Partial<SnackbarRecord> {
+  if (options.layout === undefined && options.compact === undefined) return {};
+  const layout = resolveLayout(options.layout, options.compact, record.layout);
+  return { layout, compact: layout === 'compact' };
+}
+
+function mergeConfig(
+  previous: ResolvedSnackbarStoreConfig,
+  patch: SnackbarStoreConfig,
+): ResolvedSnackbarStoreConfig {
+  const layout = resolveLayout(patch.layout, patch.compact, previous.layout);
+
+  return {
+    position: patch.position ?? previous.position,
+    duration:
+      patch.duration !== undefined
+        ? normalizeDuration(patch.duration, previous.duration)
+        : previous.duration,
+    dismissible: patch.dismissible ?? previous.dismissible,
+    progress: patch.progress ?? previous.progress,
+    compact: layout === 'compact',
+    layout,
+    animation: patch.animation ?? previous.animation,
+    enterAnimation:
+      patch.enterAnimation ?? patch.animation ?? previous.enterAnimation,
+    exitAnimation: patch.exitAnimation ?? patch.animation ?? previous.exitAnimation,
+    tone: patch.tone ?? previous.tone,
+    size: patch.size ?? previous.size,
+    maxVisible:
+      patch.maxVisible !== undefined
+        ? Math.max(1, Math.floor(patch.maxVisible))
+        : previous.maxVisible,
+  };
+}
+
 export function createSnackbarStore(
   initialConfig: SnackbarStoreConfig = {},
 ): SnackbarStore {
-  let config: ResolvedSnackbarStoreConfig = {
-    ...DEFAULT_CONFIG,
-    ...(initialConfig.position !== undefined
-      ? { position: initialConfig.position }
-      : null),
-    ...(initialConfig.duration !== undefined
-      ? {
-          duration: normalizeDuration(
-            initialConfig.duration,
-            DEFAULT_CONFIG.duration,
-          ),
-        }
-      : null),
-    ...(initialConfig.dismissible !== undefined
-      ? { dismissible: initialConfig.dismissible }
-      : null),
-    ...(initialConfig.progress !== undefined
-      ? { progress: initialConfig.progress }
-      : null),
-    ...(initialConfig.compact !== undefined
-      ? { compact: initialConfig.compact }
-      : null),
-    ...(initialConfig.tone !== undefined ? { tone: initialConfig.tone } : null),
-    ...(initialConfig.size !== undefined ? { size: initialConfig.size } : null),
-    ...(initialConfig.maxVisible !== undefined
-      ? { maxVisible: Math.max(1, Math.floor(initialConfig.maxVisible)) }
-      : null),
-  };
+  let config: ResolvedSnackbarStoreConfig = mergeConfig(
+    DEFAULT_CONFIG,
+    initialConfig,
+  );
 
   let records: readonly SnackbarRecord[] = EMPTY;
   const listeners = new Set<() => void>();
@@ -313,6 +346,8 @@ export function createSnackbarStore(
       return id;
     }
 
+    const layout = resolveLayout(options.layout, options.compact, config.layout);
+
     const record: SnackbarRecord = {
       id,
       title: options.title,
@@ -326,7 +361,13 @@ export function createSnackbarStore(
       action: options.action ?? null,
       dismissible: options.dismissible ?? config.dismissible,
       progress: options.progress ?? config.progress,
-      compact: options.compact ?? config.compact,
+      compact: layout === 'compact',
+      layout,
+      animation: options.animation ?? config.animation,
+      enterAnimation:
+        options.enterAnimation ?? options.animation ?? config.enterAnimation,
+      exitAnimation:
+        options.exitAnimation ?? options.animation ?? config.exitAnimation,
       className: options.className,
       style: options.style,
       createdAt: Date.now(),
@@ -360,7 +401,20 @@ export function createSnackbarStore(
         ? { dismissible: options.dismissible }
         : null),
       ...(options.progress !== undefined ? { progress: options.progress } : null),
-      ...(options.compact !== undefined ? { compact: options.compact } : null),
+      ...resolveLayoutPatch(record, options),
+      ...(options.animation !== undefined
+        ? {
+            animation: options.animation,
+            enterAnimation: options.animation,
+            exitAnimation: options.animation,
+          }
+        : null),
+      ...(options.enterAnimation !== undefined
+        ? { enterAnimation: options.enterAnimation }
+        : null),
+      ...(options.exitAnimation !== undefined
+        ? { exitAnimation: options.exitAnimation }
+        : null),
       ...(options.className !== undefined ? { className: options.className } : null),
       ...(options.style !== undefined ? { style: options.style } : null),
       ...(options.onOpen !== undefined ? { onOpen: options.onOpen } : null),
@@ -422,25 +476,7 @@ export function createSnackbarStore(
   };
 
   const setConfig = (patch: SnackbarStoreConfig) => {
-    config = {
-      ...config,
-      ...(patch.position !== undefined ? { position: patch.position } : null),
-      ...(patch.duration !== undefined
-        ? {
-            duration: normalizeDuration(patch.duration, config.duration),
-          }
-        : null),
-      ...(patch.dismissible !== undefined
-        ? { dismissible: patch.dismissible }
-        : null),
-      ...(patch.progress !== undefined ? { progress: patch.progress } : null),
-      ...(patch.compact !== undefined ? { compact: patch.compact } : null),
-      ...(patch.tone !== undefined ? { tone: patch.tone } : null),
-      ...(patch.size !== undefined ? { size: patch.size } : null),
-      ...(patch.maxVisible !== undefined
-        ? { maxVisible: Math.max(1, Math.floor(patch.maxVisible)) }
-        : null),
-    };
+    config = mergeConfig(config, patch);
   };
 
   const promise = <T,>(

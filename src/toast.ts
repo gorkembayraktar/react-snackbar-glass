@@ -53,6 +53,8 @@ function createToast(): ToastApi {
   toast.info = preset('info');
   toast.neutral = preset('neutral');
   toast.custom = preset('custom');
+  toast.single = (message, options = {}) =>
+    getDefaultStore().show({ ...options, message, layout: 'inline' });
   toast.loading = (message, options = {}) =>
     getDefaultStore().show({
       ...options,

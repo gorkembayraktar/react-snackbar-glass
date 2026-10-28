@@ -9,6 +9,8 @@ dependencies**.
 - ⏳ **Promise aware** — one call moves a snackbar through loading → success → error
 - 👆 **Swipe to dismiss**, hover/focus/document-hidden pause, countdown hairline
 - 📦 **Compact + minimize** — one-line pills, or collapse the whole stack
+- ✏️ **Single-line status** — `toast.single()` for instant, title-less feedback
+- 🎞️ **Pick your motion** — slide, fade, scale, pop, flip or none
 - ♿ **Accessible** — polite/assertive live regions, keyboard reachable actions, `prefers-reduced-motion`
 - 🧩 **Typed** — written in TypeScript, ships ESM + CJS + `.d.ts`
 - 🪶 **Tiny** — React is the only peer dependency
@@ -162,6 +164,9 @@ the snackbar only closes after the handler settles (`closeOnClick`, default
 | `dismissible` | `boolean` | `true` | Show the close button. |
 | `progress` | `boolean` | `true` | Show the countdown hairline. |
 | `compact` | `boolean` | `false` | Single-line pill for every snackbar. |
+| `layout` | `'card' \| 'compact' \| 'inline'` | `'card'` | Default layout; `compact` is sugar for `'compact'`. |
+| `animation` | `'slide' \| 'fade' \| 'scale' \| 'pop' \| 'flip' \| 'none'` | `'slide'` | Enter + exit animation preset. |
+| `enterAnimation` / `exitAnimation` | same as `animation` | — | Override a single phase. |
 | `minimizedLabel` | `(count: number) => ReactNode` | `"3 notifications"` | Text on the collapsed pill. |
 | `pauseOnHover` | `boolean` | `true` | Freeze the timer while hovered. |
 | `pauseOnFocus` | `boolean` | `true` | Freeze the timer while focus is inside. |
@@ -178,11 +183,54 @@ the snackbar only closes after the handler settles (`closeOnClick`, default
 ## `SnackbarOptions`
 
 `id`, `title`, `message`, `variant`, `duration`, `position`, `icon`,
-`action`, `dismissible`, `progress`, `compact`, `tone`, `size`, `className`,
-`style`, `onOpen`, `onClose`.
+`action`, `dismissible`, `progress`, `compact`, `layout`, `animation`,
+`enterAnimation`, `exitAnimation`, `tone`, `size`, `className`, `style`,
+`onOpen`, `onClose`.
 
 Reusing an `id` updates (or revives) the existing snackbar instead of stacking
 a duplicate — ideal for progress-style flows.
+
+## Single-line status notices
+
+`toast.single()` is the "one line, no ceremony" preset: content width, a hard
+one-line contract (long text truncates with an ellipsis instead of wrapping),
+no title, no countdown hairline and no close button while it is timed.
+
+```ts
+toast.single('Position set to top-center', { variant: 'success' });
+toast.single('Could not reach the server', { variant: 'error', duration: 8000 });
+```
+
+It is `layout: 'inline'` under the hood, so every entry point can do the same:
+
+```ts
+snackbar.show({ message: 'Synced', layout: 'inline' });
+useSnackbar().single('Copied to clipboard');
+<SnackbarProvider layout="inline" />;
+```
+
+## Animations
+
+One preset drives both phases; `enterAnimation` / `exitAnimation` override a
+single phase:
+
+```ts
+toast.success('Saved', { animation: 'fade' });
+toast.error('Failed', { animation: 'scale', exitAnimation: 'none' });
+<SnackbarProvider animation="pop" />;
+```
+
+| Preset | Feel |
+| --- | --- |
+| `slide` | Spring slide from the nearest edge with a soft blur (default). |
+| `fade` | Pure opacity cross-fade. |
+| `scale` | Zoom from the center. |
+| `pop` | Bouncy overshoot. |
+| `flip` | 3D flip on the X axis. |
+| `none` | Instant, no motion. |
+
+Pace them with `--prs-enter-duration` / `--prs-exit-duration` (defaults
+`440ms` / `190ms`); `prefers-reduced-motion` still disables everything.
 
 ## Compact and minimized stacks
 

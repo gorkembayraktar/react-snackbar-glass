@@ -22,6 +22,34 @@ export type SnackbarTone = 'glass' | 'solid';
  */
 export type SnackbarSize = 'xs' | 'sm' | 'md' | 'lg';
 
+/**
+ * How much room a snackbar takes.
+ *
+ * - `card` — full card: title, message, action, countdown hairline.
+ * - `compact` — fully rounded single-line pill.
+ * - `inline` — message-only status line: content width, ~38px tall, never
+ *   wraps and never shows a title or countdown.
+ */
+export type SnackbarLayout = 'card' | 'compact' | 'inline';
+
+/**
+ * Enter/exit animation preset.
+ *
+ * - `slide` — spring slide from the edge with a soft blur (default).
+ * - `fade` — pure opacity cross-fade.
+ * - `scale` — zoom in/out from the center.
+ * - `pop` — bouncy overshoot.
+ * - `flip` — 3D flip on the X axis.
+ * - `none` — appears and disappears instantly.
+ */
+export type SnackbarAnimation =
+  | 'slide'
+  | 'fade'
+  | 'scale'
+  | 'pop'
+  | 'flip'
+  | 'none';
+
 export type SnackbarPosition =
   | 'top-left'
   | 'top-center'
@@ -88,9 +116,27 @@ export interface SnackbarOptions {
   /**
    * Single-line pill: no title, no countdown hairline and tighter padding.
    * Ideal for high-frequency, low-stakes messages.
+   *
+   * Sugar for `layout: 'compact'`.
    * @default false
    */
   compact?: boolean;
+  /**
+   * How much room the snackbar takes. `compact: true` is sugar for
+   * `layout: 'compact'`; `toast.single()` uses `'inline'`.
+   * @default 'card'
+   */
+  layout?: SnackbarLayout;
+  /**
+   * Enter/exit animation preset. Applies to both phases unless
+   * `enterAnimation` / `exitAnimation` override it.
+   * @default 'slide'
+   */
+  animation?: SnackbarAnimation;
+  /** Enter animation for this snackbar only. */
+  enterAnimation?: SnackbarAnimation;
+  /** Exit animation for this snackbar only. */
+  exitAnimation?: SnackbarAnimation;
   /** @default 'glass' */
   tone?: SnackbarTone;
   /** @default 'md' */
@@ -118,6 +164,10 @@ export interface SnackbarRecord {
   readonly dismissible: boolean;
   readonly progress: boolean;
   readonly compact: boolean;
+  readonly layout: SnackbarLayout;
+  readonly animation: SnackbarAnimation;
+  readonly enterAnimation: SnackbarAnimation;
+  readonly exitAnimation: SnackbarAnimation;
   readonly className: string | undefined;
   readonly style: CSSProperties | undefined;
   readonly createdAt: number;
@@ -139,6 +189,14 @@ export interface SnackbarStoreConfig {
   progress?: boolean;
   /** Default `compact` value for new snackbars. @default false */
   compact?: boolean;
+  /** Default layout for new snackbars. @default 'card' */
+  layout?: SnackbarLayout;
+  /** Default enter/exit animation. @default 'slide' */
+  animation?: SnackbarAnimation;
+  /** Default enter animation; falls back to `animation`. */
+  enterAnimation?: SnackbarAnimation;
+  /** Default exit animation; falls back to `animation`. */
+  exitAnimation?: SnackbarAnimation;
   /** @default 'glass' */
   tone?: SnackbarTone;
   /** Default size for new snackbars. @default 'md' */
@@ -153,6 +211,10 @@ export interface ResolvedSnackbarStoreConfig {
   dismissible: boolean;
   progress: boolean;
   compact: boolean;
+  layout: SnackbarLayout;
+  animation: SnackbarAnimation;
+  enterAnimation: SnackbarAnimation;
+  exitAnimation: SnackbarAnimation;
   tone: SnackbarTone;
   size: SnackbarSize;
   maxVisible: number;
@@ -203,6 +265,9 @@ export interface SnackbarStore {
 
 type SnackbarPresetOptions = Omit<SnackbarOptions, 'message' | 'variant'>;
 
+/** `toast.single()` options: everything except the forced inline layout. */
+export type ToastSingleOptions = Omit<SnackbarOptions, 'message' | 'layout'>;
+
 export interface SnackbarApi {
   /** Queue a fully customised snackbar and return its id. */
   show(options: SnackbarOptions): string;
@@ -216,6 +281,12 @@ export interface SnackbarApi {
   neutral(message: ReactNode, options?: SnackbarPresetOptions): string;
   loading(message: ReactNode, options?: SnackbarPresetOptions): string;
   custom(message: ReactNode, options?: SnackbarPresetOptions): string;
+  /**
+   * Message-only status line (`layout: 'inline'`): content width, one line,
+   * no title and no countdown. Ideal for instant feedback such as
+   * “Position set to top-center”.
+   */
+  single(message: ReactNode, options?: ToastSingleOptions): string;
   promise<T>(
     promise: Promise<T>,
     messages: SnackbarPromiseOptions<T>,
@@ -254,6 +325,12 @@ export interface ToastApi {
   neutral(message: ReactNode, options?: ToastPresetOptions): string;
   loading(message: ReactNode, options?: ToastPresetOptions): string;
   custom(message: ReactNode, options?: ToastPresetOptions): string;
+  /**
+   * Message-only status line (`layout: 'inline'`): content width, one line,
+   * no title and no countdown. Ideal for instant feedback such as
+   * “Position set to top-center”.
+   */
+  single(message: ReactNode, options?: ToastSingleOptions): string;
   promise<T>(
     promise: Promise<T>,
     messages: SnackbarPromiseOptions<T>,
@@ -323,6 +400,14 @@ export interface SnackbarProviderProps
   progress?: boolean;
   /** Render every snackbar as a single-line pill. @default false */
   compact?: boolean;
+  /** Default layout for new snackbars. @default 'card' */
+  layout?: SnackbarLayout;
+  /** Default enter/exit animation. @default 'slide' */
+  animation?: SnackbarAnimation;
+  /** Default enter animation; falls back to `animation`. */
+  enterAnimation?: SnackbarAnimation;
+  /** Default exit animation; falls back to `animation`. */
+  exitAnimation?: SnackbarAnimation;
   /** @default 'glass' */
   tone?: SnackbarTone;
   /** Default size for new snackbars. @default 'md' */
