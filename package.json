@@ -1,7 +1,7 @@
 {
   "name": "react-snackbar-glass",
   "version": "1.0.0",
-  "description": "A premium, glassmorphic snackbar system for React — queueing, promises, swipe-to-dismiss and first-class theming with zero runtime dependencies.",
+  "description": "A glassmorphic snackbar system for React — queueing, promises, swipe-to-dismiss and first-class theming with zero runtime dependencies.",
   "keywords": [
     "react",
     "snackbar",

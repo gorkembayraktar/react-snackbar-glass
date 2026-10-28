@@ -1,6 +1,6 @@
 # react-snackbar-glass
 
-A premium, glassmorphic snackbar system for React — queueing, promise-aware
+A glassmorphic snackbar system for React — queueing, promise-aware
 states, swipe-to-dismiss and token-driven theming with **zero runtime
 dependencies**.
 

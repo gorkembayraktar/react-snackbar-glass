@@ -548,12 +548,12 @@ export default function App() {
       <div className="page__grid" aria-hidden="true" />
 
       <header className="topbar">
-        <a className="brand" href="#top" aria-label="Premium Snackbar home">
+        <a className="brand" href="#top" aria-label="Glass Snackbar home">
           <span className="brand__mark">
             <SparkIcon size={19} />
           </span>
           <span className="brand__name">
-            Premium <span>Snackbar</span>
+            Glass <span>Snackbar</span>
           </span>
           <span className="brand__version">1.0</span>
         </a>
@@ -608,7 +608,7 @@ function Showcase({
   useEffect(() => {
     const timer = window.setTimeout(() => {
       api.success('Welcome to the live demo.', {
-        title: 'Premium Snackbar',
+        title: 'Glass Snackbar',
         duration: 6000,
         action: { label: 'Nice' },
       });
@@ -1340,7 +1340,7 @@ function Showcase({
             <SparkIcon size={15} />
           </span>
           <span className="brand__name">
-            Premium <span>Snackbar</span>
+            Glass <span>Snackbar</span>
           </span>
         </span>
         <p>Designed for the 420 milliseconds people actually notice.</p>
