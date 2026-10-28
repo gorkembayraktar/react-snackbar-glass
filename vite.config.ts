@@ -4,6 +4,9 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   root: 'demo',
+  // GitHub Pages serves project sites from /<repo>/, so the deploy workflow
+  // sets VITE_BASE. Local dev/build keeps the root base.
+  base: process.env.VITE_BASE ?? '/',
   plugins: [react()],
   resolve: {
     alias: {

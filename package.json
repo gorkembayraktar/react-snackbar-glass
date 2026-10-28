@@ -14,6 +14,14 @@
   ],
   "license": "MIT",
   "author": "react-snackbar-glass contributors",
+  "homepage": "https://gorkembayraktar.github.io/react-snackbar-glass/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gorkembayraktar/react-snackbar-glass.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gorkembayraktar/react-snackbar-glass/issues"
+  },
   "type": "module",
   "sideEffects": [
     "**/*.css"
