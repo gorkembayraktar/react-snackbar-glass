@@ -19,8 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`'slide' | 'fade' | 'scale' | 'pop' | 'flip' | 'none'`).
 - `--prs-enter-duration` / `--prs-exit-duration` and `--prs-radius-inline`
   CSS variables for pacing and shaping the new modes.
-- Demo: layout and motion selectors in the Studio panel, `toast.single()`
-  example, and position buttons now confirm with a single-line toast.
+- Demo: replaced the showcase page with an API-first homepage — hero install
+  command, 3-step quickstart, live playground, method/option tables and theming
+  notes (`demo/src/ApiHome.tsx`).
 
 ## [1.2.0] - 2026-10-28
 
