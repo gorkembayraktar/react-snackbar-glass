@@ -5,7 +5,7 @@ import {
   useMemo,
   type ReactNode,
 } from 'react';
-import { createSnackbarStore } from './core/createSnackbarStore';
+import { getDefaultStore } from './core/defaultStore';
 import { SnackbarHost } from './SnackbarHost';
 import type {
   SnackbarApi,
@@ -38,15 +38,9 @@ export function SnackbarProvider({
 }: SnackbarProviderProps) {
   const store = useMemo(
     () =>
-      providedStore ??
-      createSnackbarStore({
-        position,
-        duration,
-        dismissible,
-        progress,
-        tone,
-        size,
-      }),
+      // Falling back to the shared default store is what makes the
+      // module-level `toast` API render without extra wiring.
+      providedStore ?? getDefaultStore(),
     // The store is intentionally created once per provider instance.
     // Subsequent config changes are pushed below.
     [providedStore],

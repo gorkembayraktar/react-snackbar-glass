@@ -5,6 +5,7 @@ states, swipe-to-dismiss and token-driven theming with **zero runtime
 dependencies**.
 
 - 🪟 **Glass or solid** surfaces, `xs` → `lg` sizes, six screen corners
+- 🌍 **Global `toast`** — call it from anywhere, no hook required
 - ⏳ **Promise aware** — one call moves a snackbar through loading → success → error
 - 👆 **Swipe to dismiss**, hover/focus/document-hidden pause, countdown hairline
 - ♿ **Accessible** — polite/assertive live regions, keyboard reachable actions, `prefers-reduced-motion`
@@ -62,6 +63,35 @@ function Dashboard() {
 | `success / error / warning / info / neutral / loading / custom(message, options?)` | Variant presets. |
 | `promise(promise, messages, options?)` | Drive a single snackbar through loading, success and error. |
 | `store` | Escape hatch: the underlying store for subscriptions and advanced updates. |
+
+### `toast` — global API
+
+Import `toast` when you are outside a component: data layers, event
+emitters, API clients, `setTimeout` callbacks. It targets the same store
+that `<SnackbarProvider>` renders, so no hook is needed.
+
+```ts
+import { toast } from 'react-snackbar-glass';
+
+toast('Draft saved');
+toast.success('Deployment complete.', { title: 'v1.4.0 is live' });
+toast.error('Payment declined', { action: { label: 'Retry', onClick: retry } });
+```
+
+It mirrors `useSnackbar()` one-to-one — `show`, `update`, `dismiss`,
+`dismissAll`, every variant preset, `promise`, and `store`:
+
+```ts
+const id = toast.loading('Saving…');
+await save();
+toast.update(id, { variant: 'success', message: 'Saved', duration: 3000 });
+```
+
+`<SnackbarProvider>` renders the shared store by default. Mount
+`<SnackbarHost store={getDefaultStore()} />` if you need the host without a
+provider, and `setDefaultStore(store)` to point `toast` at a store of your
+own (handy in tests or multi-app setups). On the server, pass an explicit
+`store` so requests stay isolated.
 
 ### Promise-aware flows
 

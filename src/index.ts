@@ -1,12 +1,14 @@
 import './styles.css';
 
 export { createSnackbarStore } from './core/createSnackbarStore';
+export { getDefaultStore, setDefaultStore } from './core/defaultStore';
 export { SnackbarHost } from './SnackbarHost';
 export {
   SnackbarProvider,
   useSnackbar,
   useSnackbarStore,
 } from './SnackbarProvider';
+export { toast } from './toast';
 export type {
   ResolvedSnackbarStoreConfig,
   SnackbarAction,
@@ -26,4 +28,6 @@ export type {
   SnackbarTheme,
   SnackbarTone,
   SnackbarVariant,
+  ToastApi,
+  ToastPresetOptions,
 } from './types';

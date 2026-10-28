@@ -5,6 +5,23 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-10-28
+
+### Added
+
+- Global `toast` API: callable (`toast('Saved')`), option objects
+  (`toast({ message, variant })`), every variant preset, plus `show`,
+  `update`, `dismiss`, `dismissAll`, `promise` and a `store` accessor.
+- `getDefaultStore()` / `setDefaultStore()` to share or swap the store behind
+  the global API.
+- `<SnackbarProvider>` now renders the shared default store when no `store`
+  prop is given, so `toast` works with zero wiring.
+
+### Changed
+
+- Copy and docs rebranded from "premium" to "glass".
+- Added `repository`, `homepage` and `bugs` metadata.
+
 ## [1.0.0] - 2026-10-28
 
 ### Added

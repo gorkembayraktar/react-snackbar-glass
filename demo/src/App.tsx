@@ -1176,14 +1176,14 @@ function Showcase({
               <pre className="snippet">
                 <code>
                   <span className="tok-comment">
-                    {'// glass or solid, six corners, zero deps'}
+                    {'// global API — no hook, no context'}
                   </span>
                   {'\n'}
-                  <span className="tok-kw">const</span>{' '}
-                  <span className="tok-var">toast</span>{' '}
-                  <span className="tok-op">=</span>{' '}
-                  <span className="tok-fn">useSnackbar</span>
-                  <span className="tok-op">();</span>
+                  <span className="tok-kw">import</span>{' '}
+                  <span className="tok-op">{'{ toast }'}</span>{' '}
+                  <span className="tok-kw">from</span>{' '}
+                  <span className="tok-str">'react-snackbar-glass'</span>
+                  <span className="tok-op">;</span>
                   {'\n\n'}
                   <span className="tok-var">toast</span>
                   <span className="tok-op">.</span>

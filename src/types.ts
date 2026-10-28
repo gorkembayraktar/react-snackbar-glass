@@ -210,6 +210,39 @@ export interface SnackbarApi {
   store: SnackbarStore;
 }
 
+/** Options accepted by the preset helpers (`toast.success`, `toast.error`, …). */
+export type ToastPresetOptions = Omit<SnackbarOptions, 'message' | 'variant'>;
+
+/**
+ * Module-level toast API. It mirrors {@link SnackbarApi} but talks to the
+ * global store, so it can be called from anywhere — no hook, no provider
+ * argument, no render phase.
+ */
+export interface ToastApi {
+  /** `toast('Saved')` or `toast({ message: 'Saved', variant: 'success' })`. */
+  (message: ReactNode, options?: ToastPresetOptions): string;
+  (options: SnackbarOptions): string;
+  /** Queue a fully customised toast and return its id. */
+  show(options: SnackbarOptions): string;
+  update(id: string, options: Partial<SnackbarOptions>): void;
+  dismiss(id?: string, reason?: SnackbarCloseReason): void;
+  dismissAll(reason?: SnackbarCloseReason): void;
+  success(message: ReactNode, options?: ToastPresetOptions): string;
+  error(message: ReactNode, options?: ToastPresetOptions): string;
+  warning(message: ReactNode, options?: ToastPresetOptions): string;
+  info(message: ReactNode, options?: ToastPresetOptions): string;
+  neutral(message: ReactNode, options?: ToastPresetOptions): string;
+  loading(message: ReactNode, options?: ToastPresetOptions): string;
+  custom(message: ReactNode, options?: ToastPresetOptions): string;
+  promise<T>(
+    promise: Promise<T>,
+    messages: SnackbarPromiseOptions<T>,
+    options?: SnackbarOptions,
+  ): Promise<T>;
+  /** The store behind the global API (same instance the provider renders). */
+  readonly store: SnackbarStore;
+}
+
 export interface SnackbarHostProps {
   store: SnackbarStore;
   /** Maximum simultaneously visible snackbars per corner. */
