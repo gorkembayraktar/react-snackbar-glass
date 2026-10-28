@@ -34,8 +34,10 @@ const STEP_CALL = `import { toast } from 'react-snackbar-glass';
 
 toast.success('Draft saved to your workspace.');
 
-// Anywhere: event handlers, API clients, plain modules.
-toast.error('Upload failed', { action: { label: 'Retry', onClick: retry } });`;
+// Anywhere: handlers, API clients, plain modules.
+toast.error('Upload failed', {
+  action: { label: 'Retry', onClick: retry },
+});`;
 
 /* ----------------------------------------------------------------- controls */
 
@@ -660,34 +662,46 @@ function Docs({
             <h2>Three steps to your first snackbar</h2>
           </header>
 
-          <div className="steps">
-            <article className="step">
+          <ol className="steps">
+            <li className="step">
               <span className="step__badge">01</span>
-              <h3>Install</h3>
-              <p>One package, no peer dependencies beyond React.</p>
-              <CodeBlock code={INSTALL} tone="terminal" />
-            </article>
+              <div className="step__body">
+                <h3>Install</h3>
+                <p>One package, no peer dependencies beyond React.</p>
+              </div>
+              <div className="step__code">
+                <CodeBlock code={INSTALL} tone="terminal" />
+              </div>
+            </li>
 
-            <article className="step">
+            <li className="step">
               <span className="step__badge">02</span>
-              <h3>Mount the provider</h3>
-              <p>
-                Once, near the root. It renders the notification layer and owns
-                the queue.
-              </p>
-              <CodeBlock code={STEP_MOUNT} />
-            </article>
+              <div className="step__body">
+                <h3>Mount the provider</h3>
+                <p>
+                  Once, near the root. It renders the notification layer and
+                  owns the queue.
+                </p>
+              </div>
+              <div className="step__code">
+                <CodeBlock code={STEP_MOUNT} />
+              </div>
+            </li>
 
-            <article className="step">
+            <li className="step">
               <span className="step__badge">03</span>
-              <h3>Call it</h3>
-              <p>
-                Import <code>toast</code> anywhere — components, stores, fetch
-                wrappers, workers.
-              </p>
-              <CodeBlock code={STEP_CALL} />
-            </article>
-          </div>
+              <div className="step__body">
+                <h3>Call it</h3>
+                <p>
+                  Import <code>toast</code> anywhere — components, stores,
+                  fetch wrappers, workers.
+                </p>
+              </div>
+              <div className="step__code">
+                <CodeBlock code={STEP_CALL} />
+              </div>
+            </li>
+          </ol>
         </section>
 
         <section className="section" id="playground">
